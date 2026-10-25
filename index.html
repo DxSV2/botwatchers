@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bot Watchers: 1,111 pixel-art scouts on Robinhood Chain</title>
+<meta name="description" content="Bot Watchers are 1,111 pixel-art robots on Robinhood Chain, built to hunt alpha before the crowd does. Features are in development. Not financial advice.">
+<meta name="theme-color" content="#cdff00">
+<link rel="icon" href="favicon.png" type="image/png">
+<!-- TODO: after deploying, change og:image and og:url to your full Vercel/custom domain, e.g. https://yourdomain.com/og.png -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Bot Watchers: 1,111 pixel-art scouts on Robinhood Chain">
+<meta property="og:description" content="1,111 pixel-art robots built to hunt alpha before the crowd does. Features are in development. Not financial advice.">
+<meta property="og:image" content="/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Pixelify+Sans:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lime:#cdff00;      /* exact background color of every Watcher image */
+  --ink:#000;
+  --ink-2:#1b1b1b;
+  --paper:#f4ffd0;
+  --mute:#c3d28a;      /* secondary text on black */
+  --mute-ink:#2c3300;  /* secondary text on lime */
+  --px:'Pixelify Sans','Courier New',monospace;
+  --body:'Instrument Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{margin:0;background:var(--lime);color:var(--ink);font:400 1.0625rem/1.55 var(--body);-webkit-font-smoothing:antialiased}
+img{image-rendering:pixelated;display:block}
+a{color:inherit}
+h1,h2,h3{font-family:var(--px);font-weight:700;line-height:1;margin:0;letter-spacing:-.01em}
+h2{font-size:clamp(2rem,5vw,3.4rem)}
+p{margin:0}
+.wrap{width:min(1180px,100% - 2.5rem);margin-inline:auto}
+:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.dark :focus-visible,dialog :focus-visible,header.bar :focus-visible{outline-color:var(--lime)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* buttons: hard pixel shadow */
+.btn{display:inline-block;font:600 1rem/1 var(--body);padding:.95rem 1.4rem;border:3px solid var(--ink);background:var(--ink);color:var(--lime);text-decoration:none;box-shadow:4px 4px 0 rgba(0,0,0,.35);cursor:pointer;transition:transform .08s,box-shadow .08s}
+.btn:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 rgba(0,0,0,.35)}
+.btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 rgba(0,0,0,.35)}
+.btn.alt{background:transparent;color:var(--ink)}
+.dark .btn{background:var(--lime);color:var(--ink);border-color:var(--lime);box-shadow:4px 4px 0 rgba(205,255,0,.3)}
+.dark .btn.alt{background:transparent;color:var(--lime)}
+
+/* header */
+header.bar{position:sticky;top:0;z-index:20;background:var(--ink);color:var(--lime)}
+.bar .wrap{display:flex;align-items:center;gap:1.5rem;min-height:60px}
+.brand{display:flex;align-items:center;gap:.65rem;text-decoration:none;font:700 1.25rem/1 var(--px)}
+.brand img{width:34px;height:34px;background:var(--lime)}
+.bar nav{margin-left:auto;display:flex;gap:1.6rem}
+.bar nav a{text-decoration:none;font-weight:500;color:var(--paper);padding:.3rem 0;border-bottom:2px solid transparent}
+.bar nav a:hover{border-color:var(--lime)}
+.bar .btn{padding:.6rem 1rem;font-size:.95rem;background:var(--lime);color:var(--ink);border-color:var(--lime);box-shadow:none}
+.bar .btn{white-space:nowrap}
+@media (max-width:820px){.bar nav{display:none}.bar .btn{margin-left:auto}}
+@media (max-width:520px){.bar .lg{display:none}.brand{font-size:1.1rem}}
+
+/* hero */
+.hero{padding:clamp(1.6rem,3.5vw,3rem) 0 0;overflow:hidden}
+.hero h1{font-size:clamp(3.2rem,10.2vw,8.6rem);line-height:.9}
+.hero .intro{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:1.4rem 3rem;margin-top:1.3rem}
+.hero .lead{font-size:clamp(1.1rem,2vw,1.4rem);line-height:1.45;max-width:34ch;font-weight:500}
+.hero .cta{display:flex;flex-wrap:wrap;gap:1rem}
+.stage{position:relative;margin-top:clamp(1.4rem,3vw,2.2rem);display:flex;align-items:flex-end;overflow:hidden}
+.stage figure{margin:0;position:relative;flex:1 1 0;min-width:0;cursor:crosshair;animation:rise .55s steps(6) both;animation-delay:calc(var(--i)*90ms + 250ms)}
+.sp{display:block;width:100%;aspect-ratio:1;background:url(sprites.png) no-repeat;background-size:3400% 3300%;background-position:calc(var(--c)/33*100%) calc(var(--r)/32*100%);image-rendering:pixelated}
+.lock{position:absolute;inset:7% 11% 14%;opacity:0;pointer-events:none;
+  background:
+   linear-gradient(var(--ink),var(--ink)) 0 0/18px 4px no-repeat,
+   linear-gradient(var(--ink),var(--ink)) 0 0/4px 18px no-repeat,
+   linear-gradient(var(--ink),var(--ink)) 100% 0/18px 4px no-repeat,
+   linear-gradient(var(--ink),var(--ink)) 100% 0/4px 18px no-repeat,
+   linear-gradient(var(--ink),var(--ink)) 0 100%/18px 4px no-repeat,
+   linear-gradient(var(--ink),var(--ink)) 0 100%/4px 18px no-repeat,
+   linear-gradient(var(--ink),var(--ink)) 100% 100%/18px 4px no-repeat,
+   linear-gradient(var(--ink),var(--ink)) 100% 100%/4px 18px no-repeat}
+.stage figure.locked .lock{opacity:1}
+.ground{position:absolute;left:0;right:0;bottom:0;height:30px;background:var(--ink);pointer-events:none;z-index:2}
+.ground::after{content:"";position:absolute;left:0;right:0;top:11px;height:4px;background:repeating-linear-gradient(90deg,var(--lime) 0 16px,transparent 16px 32px);opacity:.55}
+.beam{position:absolute;top:0;bottom:30px;left:0;width:4px;background:var(--ink);z-index:3;pointer-events:none;opacity:0;will-change:transform}
+.beam::before{content:"";position:absolute;right:4px;top:0;bottom:0;width:140px;background:linear-gradient(90deg,transparent,rgba(0,0,0,.16));mix-blend-mode:multiply}
+.beam.on{opacity:1}
+.readout{background:var(--ink);color:var(--lime);padding:.85rem 0 1rem;font-weight:500;min-height:3.2rem}
+.readout .wrap{display:flex;gap:.75rem;align-items:baseline}
+.readout b{font:700 1.05rem/1 var(--px);white-space:nowrap}
+@keyframes rise{from{transform:translateY(105%)}to{transform:none}}
+@media (max-width:640px){.stage figure:nth-child(n+5){display:none}}
+
+/* ticker */
+.ticker{background:var(--ink);color:var(--lime);overflow:hidden;border-top:3px solid var(--lime);padding:.9rem 0}
+.ticker .track{display:flex;width:max-content;gap:2rem;align-items:center;animation:tick 38s linear infinite}
+.ticker span{font:700 1.5rem/1 var(--px);white-space:nowrap}
+.ticker .sp{width:44px;flex:none}
+@keyframes tick{to{transform:translateX(-50%)}}
+
+section.block{padding:clamp(3.5rem,8vw,6.5rem) 0}
+.dark{background:var(--ink);color:var(--paper)}
+.dark h2,.dark h3{color:var(--lime)}
+.sub{margin-top:1rem;max-width:56ch;font-size:1.15rem}
+.dark .sub{color:var(--paper)}
+
+/* status */
+.split{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(2rem,6vw,5rem);align-items:start}
+@media (max-width:860px){.split{grid-template-columns:1fr}}
+.status{list-style:none;margin:0;padding:0;border-top:2px solid var(--lime)}
+.status li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.25rem 1rem;padding:1.15rem 0;border-bottom:2px solid rgba(205,255,0,.35)}
+.status h3{font-size:1.35rem;color:var(--paper)}
+.status p{color:var(--mute);grid-column:1}
+.chip{align-self:start;font:700 .9rem/1 var(--px);padding:.45rem .7rem;border:2px solid var(--lime);color:var(--lime);white-space:nowrap}
+.chip.done{background:var(--lime);color:var(--ink)}
+.chip.dev{border-style:dashed}
+
+/* gallery */
+.tools{display:flex;flex-wrap:wrap;gap:.9rem 1.1rem;align-items:flex-end;margin-top:2rem;padding:1.1rem;border:3px solid var(--ink);background:rgba(255,255,255,.28)}
+.tools label{display:grid;gap:.3rem;font-weight:600;font-size:.95rem}
+.tools input,.tools select{font:500 1rem var(--body);padding:.65rem .7rem;border:3px solid var(--ink);background:var(--lime);color:var(--ink);min-width:9.5rem;border-radius:0}
+.tools .btn{padding:.7rem 1.1rem}
+.count{margin-top:1rem;font-weight:500;color:var(--mute-ink)}
+.grid{list-style:none;margin:1.2rem 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(138px,1fr));gap:1rem .6rem}
+.tile{all:unset;box-sizing:border-box;display:block;width:100%;cursor:pointer;position:relative;text-align:center}
+.tile:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.tile .meta{display:flex;justify-content:space-between;align-items:center;padding:.2rem .35rem 0;font:700 .95rem/1.2 var(--px)}
+.tile .t{font:500 .78rem/1 var(--body);padding:.2rem .35rem;border:2px solid var(--ink)}
+.tile .t.hi{background:var(--ink);color:var(--lime)}
+.tile::after{content:"";position:absolute;inset:0 0 1.7rem;opacity:0;transition:opacity .08s;pointer-events:none;
+  background:
+   linear-gradient(var(--ink),var(--ink)) 6% 4%/14px 3px no-repeat,linear-gradient(var(--ink),var(--ink)) 6% 4%/3px 14px no-repeat,
+   linear-gradient(var(--ink),var(--ink)) 94% 4%/14px 3px no-repeat,linear-gradient(var(--ink),var(--ink)) 94% 4%/3px 14px no-repeat}
+.tile:hover::after,.tile:focus-visible::after{opacity:1}
+.more{display:flex;justify-content:center;margin-top:2.2rem}
+.empty{margin-top:1.6rem;font-weight:500}
+
+/* traits */
+.tabs{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:2rem}
+.tabs button{font:700 .95rem/1 var(--px);padding:.6rem .85rem;border:2px solid var(--lime);background:transparent;color:var(--lime);cursor:pointer}
+.tabs button[aria-selected=true]{background:var(--lime);color:var(--ink)}
+.bars{margin-top:1.5rem;display:grid;gap:.45rem;max-width:880px}
+.bar-row{display:grid;grid-template-columns:7.5rem minmax(0,1fr) 9.5rem;gap:.8rem;align-items:center;font-size:.98rem}
+.bar-row .lbl{color:var(--paper);font-weight:500}
+.bar-row .num{color:var(--mute);text-align:right;font-variant-numeric:tabular-nums}
+.bar-row .rail{height:16px;background:rgba(205,255,0,.12)}
+.bar-row .rail i{display:block;height:100%;background:var(--lime)}
+@media (max-width:560px){.bar-row{grid-template-columns:5.5rem minmax(0,1fr) 6.5rem;font-size:.9rem}}
+.tiers{margin-top:3.5rem}
+.tiers h3{font-size:1.6rem}
+.seg{display:flex;height:36px;margin-top:1rem;border:2px solid var(--lime)}
+.seg div{display:grid;place-items:center;font:700 .85rem/1 var(--px);overflow:hidden;white-space:nowrap}
+.seg .s0{background:var(--lime);color:var(--ink)}
+.seg .s1{background:#a8d100;color:var(--ink)}
+.seg .s2{background:#7c9a00;color:var(--ink)}
+.seg .s3{background:#4c5e00;color:var(--paper)}
+.seg .s4{background:#222a00;color:var(--paper)}
+.seglist{display:flex;flex-wrap:wrap;gap:.4rem 1.5rem;margin-top:.8rem;color:var(--mute)}
+.seglist b{color:var(--paper);font-weight:600}
+
+/* trailer */
+.trailer{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:clamp(2rem,6vw,5rem);align-items:center}
+@media (max-width:860px){.trailer{grid-template-columns:1fr}}
+.vid{border:4px solid var(--ink);box-shadow:8px 8px 0 rgba(0,0,0,.3);background:var(--ink);line-height:0}
+.vid video{width:100%;height:auto;aspect-ratio:1}
+
+/* faq */
+.faq{margin-top:2.2rem;border-top:3px solid var(--lime);max-width:860px}
+.faq details{border-bottom:2px solid rgba(205,255,0,.4)}
+.faq summary{list-style:none;cursor:pointer;padding:1.15rem 2.5rem 1.15rem 0;font:700 1.3rem/1.2 var(--px);color:var(--paper);position:relative}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";position:absolute;right:.2rem;top:1rem;color:var(--lime);font-size:1.7rem}
+.faq details[open] summary::after{content:"\2212"}
+.faq details p{padding:0 2.5rem 1.3rem 0;color:var(--mute);max-width:62ch}
+
+footer{background:var(--ink);color:var(--paper);padding:2.2rem 0 3rem;border-top:3px solid var(--lime)}
+footer .wrap{display:flex;flex-wrap:wrap;gap:1.5rem 3rem;justify-content:space-between}
+footer .links{display:flex;gap:1.4rem;flex-wrap:wrap}
+footer a{color:var(--lime);font-weight:600}
+footer .fine{flex-basis:100%;color:var(--mute);font-size:.92rem;max-width:80ch}
+
+/* viewer */
+dialog{border:4px solid var(--lime);background:var(--ink);color:var(--paper);padding:0;width:min(780px,calc(100% - 1.5rem));max-height:calc(100% - 1.5rem)}
+dialog::backdrop{background:rgba(0,0,0,.8)}
+.v{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:1.4rem;padding:1.4rem}
+@media (max-width:640px){.v{grid-template-columns:1fr}}
+.v .sp{border:3px solid var(--lime)}
+.v h3{font-size:2rem;padding-right:5.5rem}
+.v .rk{margin-top:.5rem;color:var(--mute)}
+.v dl{margin:1rem 0 0;display:grid;grid-template-columns:auto 1fr;gap:.35rem 1rem}
+.v dt{color:var(--mute)}
+.v dd{margin:0;font-weight:600}
+.v dd small{font-weight:400;color:var(--mute)}
+.vnav{display:flex;gap:.6rem;margin-top:1.3rem}
+.vnav .btn{padding:.6rem .9rem;font-size:.95rem}
+.vclose{position:absolute;right:.6rem;top:.5rem}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .stage figure{animation:none}
+  .ticker .track{animation:none}
+  .beam{display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="wrap">
+    <a class="brand" href="#top"><img src="favicon.png" alt="" width="34" height="34">Bot Watchers</a>
+    <nav aria-label="Main">
+      <a href="#status">Status</a>
+      <a href="#watchers">Watchers</a>
+      <a href="#traits">Traits</a>
+      <a href="#trailer">Trailer</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <!-- TODO: replace "#" with your real OpenSea collection link -->
+    <a class="btn" href="#" data-link="opensea"><span class="lg">View on </span>OpenSea</a>
+  </div>
+</header>
+
+<main id="top">
+<section class="hero">
+  <div class="wrap">
+    <h1>Bot Watchers</h1>
+    <div class="intro">
+      <p class="lead">1,111 pixel-art robots on Robinhood Chain, built to hunt alpha before the crowd does.</p>
+      <div class="cta">
+        <a class="btn" href="#watchers">Browse all 1,111</a>
+        <a class="btn alt" href="#trailer">Watch the trailer</a>
+      </div>
+    </div>
+  </div>
+  <div class="stage" id="stage" aria-label="Seven Bot Watchers lined up on a ledge while a scanner sweeps across them">
+    <div class="beam" id="beam"></div>
+    <div class="ground"></div>
+  </div>
+  <div class="readout"><div class="wrap"><b id="rdId">Scanning</b><span id="rdTxt">Move over a Watcher to lock on to it.</span></div></div>
+</section>
+
+<div class="ticker" aria-hidden="true"><div class="track" id="track"></div></div>
+
+<section class="block dark" id="status">
+  <div class="wrap split">
+    <div>
+      <h2>What’s ready, and what isn’t</h2>
+      <p class="sub">Each Watcher is a scout for its holder. The scouting tools are planned to help snipe NFT alpha and token alpha, and they are still in development.</p>
+    </div>
+    <!-- Edit these rows as things change. Statuses: done / dev / wait -->
+    <ul class="status">
+      <li><h3>Collection art</h3><span class="chip done">Ready</span><p>1,111 Watchers, each with 9 trait layers.</p></li>
+      <li><h3>Metadata and rarity</h3><span class="chip done">Ready</span><p>Every Watcher has a rank and a rarity tier, listed below.</p></li>
+      <li><h3>Mint</h3><span class="chip dev">Date to be announced</span><p>Follow the links in the footer for the announcement.</p></li>
+      <li><h3>NFT alpha tools</h3><span class="chip dev">In development</span><p>Planned to help holders spot NFT opportunities early.</p></li>
+      <li><h3>Token alpha tools</h3><span class="chip dev">In development</span><p>Planned to help holders spot token opportunities early.</p></li>
+    </ul>
+  </div>
+</section>
+
+<section class="block" id="watchers">
+  <div class="wrap">
+    <h2>Meet the Watchers</h2>
+    <p class="sub">Search by ID, filter by body color or rarity tier, and open any Watcher to see its traits.</p>
+    <form class="tools" id="tools" role="search" onsubmit="return false">
+      <label>Watcher ID<input id="fId" type="number" min="1" max="1111" inputmode="numeric" placeholder="1 to 1111"></label>
+      <label>Body color<select id="fBody"></select></label>
+      <label>Rarity tier<select id="fTier"></select></label>
+      <button class="btn" type="button" id="bShuffle">Shuffle</button>
+      <button class="btn alt" type="button" id="bReset">Reset</button>
+    </form>
+    <p class="count" id="count" aria-live="polite"></p>
+    <ul class="grid" id="grid"></ul>
+    <p class="empty" id="empty" hidden>No Watchers match those filters. Clear a filter or try another ID.</p>
+    <div class="more"><button class="btn" type="button" id="bMore">Show more Watchers</button></div>
+  </div>
+</section>
+
+<section class="block dark" id="traits">
+  <div class="wrap">
+    <h2>What they’re made of</h2>
+    <p class="sub">Nine trait categories decide how a Watcher looks and how rare it is. Pick a category to see how many Watchers have each trait.</p>
+    <div class="tabs" id="tabs" role="tablist" aria-label="Trait categories"></div>
+    <div class="bars" id="bars" role="tabpanel"></div>
+    <div class="tiers">
+      <h3>Rarity tiers</h3>
+      <div class="seg" id="seg" role="img" aria-label="Share of Watchers in each rarity tier"></div>
+      <div class="seglist" id="seglist"></div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="trailer">
+  <div class="wrap trailer">
+    <div>
+      <h2>Watch the scouts deploy</h2>
+      <p class="sub">A 13-second look at the Watchers scanning for alpha. Sound is off, nothing is promised, and everything shown is still in development.</p>
+    </div>
+    <div class="vid">
+      <video controls playsinline preload="metadata" muted loop poster="poster.jpg" aria-label="Bot Watchers trailer">
+        <source src="promo.mp4" type="video/mp4">
+        Your browser can’t play this video.
+      </video>
+    </div>
+  </div>
+</section>
+
+<section class="block dark" id="faq">
+  <div class="wrap">
+    <h2>Questions</h2>
+    <div class="faq">
+      <details><summary>What are Bot Watchers?</summary><p>A collection of 1,111 pixel-art robots on Robinhood Chain. Each one is a scout for whoever holds it.</p></details>
+      <details><summary>What does “alpha” mean?</summary><p>Early information that gives you an edge, like spotting an NFT drop or a token before most people notice it.</p></details>
+      <details><summary>What will a Watcher do for me?</summary><p>Watchers are planned to help snipe NFT alpha and token alpha for their holders. These features are in development, and no release dates are promised.</p></details>
+      <details><summary>Can I mint one yet?</summary><p>Mint details haven’t been announced. Check the links in the footer for the latest word.</p></details>
+      <details><summary>Is this financial advice?</summary><p>No. Nothing on this site is financial advice. NFTs and tokens can lose value, so do your own research.</p></details>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <a class="brand" href="#top" style="color:var(--lime)"><img src="favicon.png" alt="" width="34" height="34">Bot Watchers</a>
+    <!-- TODO: replace each "#" with your real links -->
+    <div class="links">
+      <a href="#" data-link="opensea">OpenSea</a>
+      <a href="#" data-link="x">X</a>
+      <a href="#" data-link="discord">Discord</a>
+    </div>
+    <p class="fine">Bot Watchers are 1,111 pixel-art robots on Robinhood Chain. Features are in development. Not financial advice.</p>
+  </div>
+</footer>
+
+<dialog id="viewer" aria-label="Watcher details">
+  <form method="dialog"><button class="btn vclose" aria-label="Close" style="padding:.4rem .7rem">Close</button></form>
+  <div class="v">
+    <div class="sp" id="vImg" role="img"></div>
+    <div>
+      <h3 id="vName"></h3>
+      <p class="rk" id="vRank"></p>
+      <dl id="vDl"></dl>
+      <div class="vnav">
+        <button class="btn" type="button" id="vPrev">Previous</button>
+        <button class="btn" type="button" id="vNext">Next</button>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<script>
+const D = {"n":["Body Color","Head","Eyes","Mouth","Face","Earring","Neck","Belly Screen","Side Item"],"v":[["Blue","Brown","Cyan","Dark","Ghost","Gold","Green","Orange","Pink","Purple","Rainbow","Red","Silver","Teal","Yellow","Zombie"],["Beanie","Bulb","Burger","Catears","Console","Cowboy","Crown","Halo","Headphones","Horns","Mohawk","Party","Propeller","Tophat","Unicorn","Visor","Zigzag","None"],["Angry","Bars","Blue","Cross","Cyclops","Dots","Green","Happy","Hearts","Red","Sleepy","Star","Wide","Wink","Xx"],["Dash","Fangs","Frown","Grin","Oh","Smile","Teeth","Tick","Tongue","Wavy","Zipper"],["Bandage","Blush","Freckles","Goatee","Mustache","Scar","None"],["Diamond","Gold","Ruby","None"],["Bowtie","Chain","Scarf","Tie","None"],["Chart","Dots","Lights","Robinhood","Squares"],["Cannon","Gatling","Patch","None"]],"t":["Common","Uncommon","Rare","Legendary","Epic"],"d":[[14,17,11,0,1,3,4,1,3,729,0],[2,17,8,4,6,3,1,0,3,903,0],[5,17,6,7,6,3,4,2,3,896,0],[0,14,10,0,6,3,1,1,3,675,1],[6,1,9,2,6,3,4,2,0,342,2],[5,17,8,2,6,3,4,4,0,691,1],[2,0,11,9,0,3,4,4,3,236,2],[10,17,5,2,6,3,4,2,3,1,3],[9,11,9,1,6,3,4,0,2,381,2],[11,16,1,6,1,3,4,1,3,546,1],[15,0,10,3,2,3,3,2,2,94,4],[6,9,5,3,6,3,4,3,3,1056,0],[2,17,5,5,6,1,4,3,3,1097,0],[14,17,6,8,6,3,4,3,3,24,3],[1,17,5,9,1,3,4,3,3,1030,0],[3,0,1,5,6,1,4,2,3,3,3],[1,3,6,4,0,3,4,1,3,410,1],[8,16,5,0,1,0,3,1,3,76,4],[2,0,2,4,5,3,4,2,3,203,2],[15,9,8,9,2,3,4,3,2,382,2],[11,10,14,3,6,3,4,3,2,21,3],[9,13,7,1,0,3,4,1,3,402,1],[8,9,5,10,6,3,4,0,3,447,1],[9,4,10,0,6,3,4,2,3,928,0],[13,4,3,6,1,1,4,4,3,145,4],[13,6,10,2,4,3,4,1,3,373,2],[6,4,7,9,2,1,2,1,3,249,2],[3,17,5,5,6,3,4,4,1,5,3],[11,7,11,0,4,2,4,0,3,13,3],[5,12,5,5,1,3,4,1,0,10,3],[9,9,5,5,1,3,4,0,1,666,1],[2,16,5,2,6,3,4,0,1,865,0],[11,11,10,2,6,3,1,1,3,732,0],[7,10,5,1,6,1,4,1,3,100,4],[8,17,10,7,6,3,4,3,3,867,0],[13,1,7,0,6,3,4,3,0,612,1],[11,15,2,0,0,3,4,2,3,487,1],[0,3,3,4,2,3,4,1,3,416,1],[8,15,5,5,6,2,2,4,3,158,4],[14,14,5,5,6,3,4,1,3,1004,0],[2,9,5,0,6,3,4,4,0,944,0],[0,11,8,5,3,3,1,4,3,52,3],[4,5,12,4,6,3,4,2,1,125,4],[7,11,13,3,6,3,4,1,3,619,1],[7,5,0,3,6,3,0,2,3,247,2],[0,17,12,7,6,3,0,3,0,486,1],[13,1,10,0,6,3,1,2,3,513,1],[9,15,7,0,4,3,2,0,3,441,1],[1,3,7,7,6,2,4,4,3,291,2],[15,17,9,6,4,3,4,0,3,398,1],[2,6,7,7,6,3,4,2,3,759,0],[3,17,2,2,4,3,4,1,2,4,3],[14,9,1,0,6,1,4,0,3,808,0],[13,17,12,5,5,3,4,3,2,189,2],[9,1,1,2,3,3,1,1,3,48,3],[11,17,5,10,6,3,3,0,3,294,2],[11,17,3,0,6,3,4,0,0,827,0],[6,4,3,5,6,3,2,3,3,720,1],[3,16,1,7,6,3,2,2,2,2,3],[2,0,2,6,1,3,4,0,1,175,2],[15,16,5,0,1,3,2,2,3,936,0],[6,4,5,4,6,2,1,1,3,318,2],[7,0,5,0,1,3,4,3,3,872,0],[14,17,7,3,6,3,1,0,3,893,0],[14,9,13,0,5,3,4,3,2,144,4],[1,16,1,2,6,2,4,3,3,550,1],[0,13,5,5,6,2,4,3,3,567,1],[0,14,3,5,6,3,4,1,2,652,1],[15,17,3,4,0,3,4,1,3,864,0],[11,14,2,0,6,1,0,3,3,433,1],[4,16,12,1,6,3,2,4,3,219,2],[14,16,5,2,4,3,2,3,3,793,0],[15,13,8,7,6,3,2,3,1,245,2],[1,8,0,5,6,3,0,3,3,142,4],[2,6,13,5,6,3,4,4,0,324,2],[0,17,6,7,1,3,0,3,3,750,0],[5,17,7,4,0,0,4,1,3,270,2],[15,2,2,5,4,3,4,2,2,439,1],[7,5,1,5,6,3,4,4,3,649,1],[2,1,13,0,6,3,0,4,3,588,1],[6,4,11,0,6,3,4,1,3,594,1],[2,11,8,4,6,0,4,3,3,340,2],[0,11,5,3,6,3,4,1,3,1079,0],[2,6,9,9,6,3,2,0,3,298,2],[12,14,2,3,0,3,0,3,3,176,2],[1,17,1,5,1,3,4,1,0,858,0],[2,2,12,0,0,3,4,4,3,574,1],[6,2,7,3,6,3,4,4,3,844,0],[13,8,7,0,6,3,4,1,3,292,2],[9,17,0,0,2,1,4,3,3,650,1],[15,17,6,9,2,1,4,0,3,404,1],[4,17,9,10,6,3,0,3,2,162,4],[1,17,7,10,6,3,4,1,3,886,0],[11,13,13,1,6,1,4,4,3,207,2],[5,2,3,2,6,3,0,3,1,190,2],[0,3,0,3,6,3,4,3,3,678,1],[9,11,5,7,2,3,4,1,3,875,0],[8,2,0,0,1,3,4,0,3,365,2],[2,5,6,4,6,3,4,4,3,673,1],[0,15,4,2,6,0,4,4,3,22,3],[5,1,2,7,1,3,4,3,3,587,1],[6,3,0,0,6,3,4,0,3,715,1],[15,9,0,5,1,3,4,0,0,465,1],[5,17,11,0,6,3,0,3,3,551,1],[15,9,10,0,6,3,4,2,3,988,0],[0,8,7,0,6,3,1,0,3,205,2],[8,2,2,0,6,3,4,2,3,548,1],[7,16,7,9,1,3,4,1,3,670,1],[1,17,5,9,6,3,4,0,3,1066,0],[5,17,5,4,6,3,4,4,2,968,0],[14,3,5,1,6,3,2,1,3,508,1],[4,13,8,4,6,2,0,0,3,96,4],[2,11,6,5,6,3,4,3,3,1026,0],[9,1,5,0,0,3,4,1,3,916,0],[6,8,10,9,6,3,4,0,3,172,2],[0,17,11,5,6,3,4,3,2,710,1],[7,9,6,3,6,3,4,4,3,610,1],[11,17,12,0,6,3,4,0,3,1027,0],[8,17,1,4,6,3,4,4,2,663,1],[0,6,3,5,4,3,4,1,3,496,1],[14,17,0,9,2,3,4,1,3,631,1],[2,0,13,4,2,3,4,1,2,328,2],[15,9,2,9,6,3,0,1,3,604,1],[8,17,5,6,6,0,2,3,3,113,4],[5,14,5,10,0,2,4,1,3,118,4],[14,14,10,2,0,3,4,1,3,556,1],[5,16,9,0,1,3,4,2,3,681,1],[13,5,2,2,1,3,0,1,1,148,4],[6,16,1,5,4,3,2,1,2,545,1],[9,9,14,9,6,3,4,3,3,53,3],[6,14,5,0,6,3,4,2,3,995,0],[0,1,8,3,6,3,4,1,0,526,1],[0,17,7,9,1,1,1,3,3,532,1],[0,10,7,3,6,3,4,3,3,310,2],[13,2,3,7,1,3,1,0,2,166,4],[4,6,6,7,1,2,4,0,3,88,4],[13,10,6,0,4,3,4,1,3,128,4],[12,17,5,0,1,3,4,1,3,983,0],[15,3,3,4,6,3,2,3,3,492,1],[9,6,10,2,6,3,4,1,3,685,1],[4,4,12,5,1,3,4,1,3,421,1],[6,8,5,9,6,3,4,1,3,274,2],[0,13,3,0,1,3,2,3,3,519,1],[2,1,10,5,6,3,4,3,3,990,0],[1,11,1,0,6,3,0,0,0,527,1],[14,16,5,9,6,3,4,4,3,956,0],[6,2,0,4,6,3,4,4,3,633,1],[14,3,7,9,6,3,4,1,2,505,1],[5,2,12,0,1,3,4,0,1,232,2],[14,9,8,3,6,3,4,0,3,860,0],[5,9,0,7,3,1,4,2,3,36,3],[0,9,12,2,6,3,4,0,3,846,0],[5,17,7,2,6,3,2,3,3,981,0],[2,1,8,2,4,3,4,4,3,665,1],[1,11,13,1,6,3,0,1,3,361,2],[9,11,13,7,6,3,4,4,3,733,0],[0,15,0,6,1,3,4,3,3,235,2],[1,2,12,7,0,3,4,1,3,399,1],[1,3,3,4,6,3,4,1,1,289,2],[1,16,3,10,6,3,1,3,3,303,2],[14,13,7,1,6,3,4,1,3,585,1],[14,4,1,6,6,3,4,3,3,540,1],[13,13,9,2,6,3,4,4,3,469,1],[12,4,0,5,6,3,1,3,3,313,2],[15,4,7,5,6,3,4,3,3,1031,0],[11,4,1,5,0,3,4,0,3,761,0],[7,17,8,5,2,3,4,1,3,799,0],[7,0,5,0,4,3,1,4,1,186,2],[0,12,3,2,0,3,4,1,3,11,3],[1,1,1,2,6,3,4,3,3,914,0],[8,17,13,5,6,3,2,0,3,568,1],[7,17,11,5,6,3,4,0,3,629,1],[11,17,6,5,6,3,4,1,3,1068,0],[14,17,1,5,1,3,2,3,3,962,0],[15,1,9,0,6,3,4,0,3,795,0],[0,17,5,2,6,3,0,1,3,1073,0],[11,9,5,2,6,2,4,3,3,668,1],[4,17,10,2,6,3,4,3,3,897,0],[0,16,10,4,5,3,4,4,3,255,2],[9,0,1,5,6,3,4,2,3,926,0],[1,15,12,5,2,3,4,4,2,216,2],[15,14,5,2,6,3,4,0,2,803,0],[7,16,10,5,0,1,4,4,3,377,2],[6,6,7,4,6,3,2,2,3,503,1],[7,6,10,6,6,2,4,3,3,91,4],[7,0,9,3,6,0,4,0,3,106,4],[7,1,5,7,2,3,0,1,3,341,2],[1,11,3,5,5,1,4,4,3,136,4],[6,16,5,5,6,3,4,1,3,1094,0],[15,16,7,7,6,3,4,1,3,1022,0],[0,11,7,0,6,3,0,3,3,977,0],[0,15,8,9,6,3,4,0,3,530,1],[5,17,10,2,6,3,4,3,3,1032,0],[0,3,7,0,6,3,2,1,2,615,1],[11,6,10,2,6,3,4,1,3,692,1],[1,1,0,2,1,3,0,3,3,411,1],[4,17,12,0,6,3,4,0,3,801,0],[2,11,9,5,6,1,4,1,3,771,0],[14,16,5,1,1,3,3,3,3,233,2],[5,16,12,3,1,3,4,1,3,627,1],[12,0,2,1,6,3,2,0,3,209,2],[5,5,8,5,1,3,3,3,3,150,4],[14,17,5,5,6,3,4,3,3,1110,0],[13,2,13,3,6,2,4,1,3,184,2],[5,14,3,1,1,3,4,1,3,317,2],[11,16,3,5,6,3,4,1,2,826,0],[0,6,5,6,0,3,4,4,3,285,2],[6,17,11,6,6,2,1,3,3,92,4],[4,15,12,4,6,0,4,1,3,82,4],[8,9,1,0,6,1,4,2,3,522,1],[14,6,5,2,6,3,0,3,3,617,1],[6,4,8,6,6,0,4,3,3,112,4],[12,1,5,5,2,3,4,0,1,212,2],[12,16,13,0,6,3,4,3,3,614,1],[0,16,11,3,6,3,4,2,3,547,1],[7,8,7,0,6,3,4,3,3,260,2],[15,0,5,3,6,3,4,3,3,1005,0],[0,1,8,10,6,3,4,0,3,464,1],[13,17,1,7,6,3,0,1,3,873,0],[4,17,1,7,6,3,4,3,3,900,0],[15,14,5,7,6,3,2,1,3,807,0],[13,17,6,3,6,3,4,4,3,902,0],[11,11,5,2,6,3,4,1,3,1077,0],[4,13,0,5,6,3,4,2,3,378,2],[9,5,1,0,6,3,4,3,1,517,1],[6,5,0,1,4,1,1,4,3,93,4],[7,0,8,5,6,3,2,0,3,520,1],[15,17,5,3,6,3,4,3,3,1107,0],[14,14,3,2,4,3,4,4,3,431,1],[11,17,12,5,6,3,4,1,3,1045,0],[9,17,5,3,3,3,1,0,0,50,3],[9,9,10,2,2,3,2,2,3,455,1],[14,9,5,0,1,3,4,4,3,1001,0],[7,9,2,0,6,3,4,0,3,847,0],[9,0,6,2,0,3,2,3,3,385,2],[2,9,11,5,1,3,4,2,1,250,2],[1,17,10,3,1,3,4,2,3,938,0],[15,8,5,9,1,3,4,3,3,227,2],[15,17,8,0,6,3,4,1,3,1096,0],[15,14,5,2,4,1,4,1,3,552,1],[9,14,1,7,1,2,4,0,3,246,2],[11,17,5,3,6,3,4,3,2,1064,0],[9,13,8,0,1,3,2,3,0,282,2],[14,9,7,10,6,2,4,1,3,248,2],[1,8,4,5,0,3,4,3,3,23,3],[6,4,2,0,2,3,4,1,3,718,1],[5,1,11,5,4,3,1,1,3,164,4],[11,9,2,1,6,3,3,4,3,171,2],[14,17,5,7,0,0,2,0,3,226,2],[2,5,9,0,6,3,2,4,3,544,1],[13,14,5,5,4,3,4,4,2,507,1],[11,9,11,3,6,3,4,4,3,485,1],[15,17,1,2,1,2,0,1,3,413,1],[2,11,7,9,3,3,4,2,3,64,4],[13,17,0,0,6,3,4,3,3,1016,0],[12,17,1,5,6,1,4,1,3,734,0],[14,1,10,2,5,1,2,1,3,90,4],[1,12,5,3,6,3,4,1,3,20,3],[1,2,10,2,6,3,4,0,3,767,0],[1,1,7,5,6,3,4,0,2,779,0],[11,5,0,1,0,3,4,3,3,271,2],[8,16,5,4,6,3,4,0,3,848,0],[9,11,7,7,5,3,4,1,3,296,2],[6,3,1,5,6,3,4,3,1,514,1],[14,8,1,6,6,3,4,3,3,116,4],[14,6,1,0,2,0,4,1,3,119,4],[15,8,6,3,6,3,4,3,3,208,2],[12,11,6,7,6,2,4,3,3,193,2],[1,17,0,7,6,3,4,3,0,693,1],[0,17,6,4,6,3,4,2,3,997,0],[7,2,6,7,6,3,4,2,3,453,1],[2,15,1,0,6,3,2,1,2,554,1],[5,17,12,5,0,3,4,2,3,731,0],[6,10,12,5,6,3,4,3,3,223,2],[14,17,13,5,6,3,2,4,2,621,1],[2,17,5,2,6,3,4,4,3,1108,0],[15,5,13,5,6,3,4,4,3,624,1],[6,17,6,5,6,3,4,4,3,1041,0],[14,3,8,1,6,3,4,3,2,330,2],[5,11,5,3,1,3,4,4,3,888,0],[1,17,10,0,6,3,3,1,2,375,2],[14,17,7,9,6,0,4,4,3,339,2],[4,16,5,1,6,3,4,1,3,662,1],[2,17,1,0,6,3,3,1,3,728,0],[11,2,9,4,6,3,4,2,2,394,1],[9,17,5,0,2,3,4,2,3,1046,0],[2,3,8,5,6,3,4,4,3,871,0],[14,1,10,5,6,3,4,4,3,859,0],[1,2,8,0,6,3,4,2,3,839,0],[6,17,3,0,2,2,4,0,3,374,2],[0,6,6,5,4,3,0,0,1,124,4],[4,14,5,0,2,3,0,1,3,326,2],[15,11,10,3,6,3,4,3,1,580,1],[2,14,5,5,6,3,4,4,3,1039,0],[0,17,6,0,1,3,1,2,3,773,0],[14,6,5,5,4,3,4,3,1,332,2],[1,12,7,0,6,1,0,0,3,9,3],[8,17,7,7,0,3,4,4,3,655,1],[9,17,0,3,2,1,3,1,3,123,4],[9,4,9,10,6,3,4,4,3,337,2],[15,4,7,4,1,3,1,3,3,581,1],[2,9,5,10,2,3,4,2,3,529,1],[15,17,4,2,6,3,4,0,3,83,4],[1,17,5,3,6,1,4,3,3,1019,0],[7,17,5,0,6,1,0,1,3,822,0],[13,9,13,5,4,3,4,2,3,499,1],[2,9,11,9,6,3,4,3,2,351,2],[6,17,4,2,6,3,4,1,3,85,4],[12,2,9,1,0,3,4,4,2,95,4],[2,16,11,0,6,3,2,2,3,543,1],[11,11,2,5,2,3,0,3,3,561,1],[7,17,7,0,6,3,4,4,3,1053,0],[9,17,1,0,6,3,4,3,3,1103,0],[11,16,7,0,1,3,3,1,0,201,2],[13,6,5,4,6,3,4,0,3,684,1],[13,12,1,5,0,3,2,0,0,8,3],[2,5,7,0,4,3,2,3,3,641,1],[1,5,14,1,6,3,2,1,3,33,3],[15,17,7,3,0,3,4,0,0,654,1],[7,3,6,5,6,3,1,3,3,335,2],[1,5,12,6,6,3,4,1,3,276,2],[14,13,0,5,6,3,4,1,3,706,1],[6,11,5,10,1,3,2,4,3,448,1],[4,17,1,5,6,3,4,3,3,984,0],[15,16,2,2,1,3,4,2,1,446,1],[11,17,2,4,1,3,4,2,3,941,0],[0,4,3,7,6,3,4,1,3,830,0],[2,17,10,5,6,3,4,0,1,906,0],[0,3,6,4,1,1,4,4,3,309,2],[0,9,7,0,3,3,4,1,3,87,4],[0,17,5,1,6,3,4,3,3,1069,0],[12,3,5,3,6,3,4,4,3,534,1],[14,11,5,0,6,3,4,1,3,1091,0],[14,0,2,8,6,3,4,2,3,18,3],[2,17,11,7,6,3,4,1,1,432,1],[11,17,3,6,1,3,4,3,3,579,1],[14,13,2,0,6,3,0,3,3,591,1],[6,3,7,6,1,1,4,0,3,202,2],[15,3,2,5,6,3,2,2,3,589,1],[12,16,14,0,6,3,4,0,2,39,3],[0,6,0,2,6,3,4,3,3,628,1],[15,2,7,2,1,3,4,3,3,842,0],[15,0,13,5,6,3,4,4,3,742,0],[2,3,3,0,6,3,4,0,3,836,0],[11,2,5,2,2,3,0,2,3,454,1],[11,17,9,5,5,3,4,4,3,299,2],[5,7,5,0,6,3,4,4,3,51,3],[11,10,7,0,6,1,4,1,3,220,2],[0,17,5,2,6,3,4,1,2,1083,0],[5,11,12,0,6,3,4,3,3,881,0],[14,17,11,2,6,3,1,0,0,224,2],[12,17,8,3,6,3,4,2,3,743,0],[5,17,5,5,6,3,2,1,2,957,0],[1,17,13,0,6,3,3,2,2,238,2],[8,17,10,5,6,3,4,0,1,524,1],[0,11,5,0,6,3,4,3,3,1100,0],[2,1,2,2,1,1,4,3,3,576,1],[5,11,0,0,6,2,2,3,3,278,2],[11,11,11,1,6,3,4,0,1,155,4],[14,6,5,10,6,3,4,2,3,400,1],[6,11,12,5,6,3,0,3,3,716,1],[15,16,0,2,4,3,4,2,3,648,1],[2,6,5,9,4,3,4,3,3,598,1],[5,6,1,0,0,3,0,3,3,322,2],[2,17,5,0,6,3,0,3,3,1102,0],[4,17,6,5,4,3,1,3,3,387,2],[5,17,6,0,6,3,4,3,3,1034,0],[9,7,12,0,6,3,4,3,3,41,3],[0,15,10,5,6,3,2,3,3,630,1],[1,9,14,3,4,3,4,1,3,49,3],[9,17,1,0,6,3,4,1,3,1101,0],[2,13,7,4,0,2,4,1,3,262,2],[8,16,0,3,0,3,4,4,3,329,2],[1,3,8,2,3,1,4,2,3,37,3],[15,1,7,4,6,3,3,4,3,261,2],[9,3,10,5,3,3,4,3,3,55,3],[9,13,11,3,6,3,0,2,3,194,2],[4,1,1,5,6,3,2,0,3,461,1],[7,14,14,4,6,3,4,4,3,40,3],[2,15,6,0,6,3,4,0,3,748,0],[5,3,12,0,1,3,4,4,2,306,2],[0,14,7,3,1,3,1,0,3,478,1],[14,17,5,9,6,3,4,0,3,1063,0],[1,13,1,2,4,3,4,3,3,590,1],[6,14,7,0,6,3,4,2,3,934,0],[11,9,5,5,6,3,4,1,3,1087,0],[2,16,3,2,6,3,4,3,3,989,0],[13,9,1,9,6,3,4,3,1,397,1],[6,17,5,6,0,3,4,4,3,694,1],[8,10,9,4,6,3,4,4,1,57,4],[4,16,2,0,6,3,4,1,3,809,0],[11,4,13,9,6,3,4,3,3,599,1],[15,16,9,7,6,3,2,0,1,277,2],[12,17,10,0,6,3,1,1,3,671,1],[11,14,6,7,6,3,4,0,3,638,1],[7,9,3,9,4,1,3,1,3,67,4],[6,6,2,5,6,3,4,2,3,682,1],[7,17,12,2,2,3,3,2,3,127,4],[1,17,6,5,4,3,4,0,3,892,0],[0,3,5,9,6,3,4,1,3,868,0],[5,0,5,8,6,3,4,0,0,14,3],[7,17,0,0,6,3,4,1,3,970,0],[1,6,9,0,1,3,4,3,3,502,1],[2,8,11,0,4,3,4,1,3,104,4],[14,3,10,2,6,3,4,1,1,356,2],[15,3,13,5,6,3,4,0,3,647,1],[1,17,9,5,6,3,2,2,3,857,0],[9,1,10,6,6,3,4,0,3,420,1],[1,17,2,7,6,3,4,1,3,1038,0],[13,9,0,0,6,3,4,0,0,484,1],[6,17,5,3,0,3,4,2,0,714,1],[5,5,10,10,0,3,0,2,3,109,4],[1,14,5,0,1,3,0,0,3,688,1],[8,1,8,9,6,3,0,1,3,268,2],[6,16,9,0,0,3,4,0,3,689,1],[6,0,5,5,6,3,4,1,3,1052,0],[13,11,6,0,4,3,4,3,3,696,1],[5,6,7,0,4,3,4,3,0,288,2],[13,9,3,0,1,1,0,3,3,320,2],[14,4,10,0,2,3,1,1,0,214,2],[13,5,7,6,6,3,4,2,3,323,2],[14,17,7,4,4,3,4,1,0,661,1],[9,0,1,5,0,3,4,3,3,776,0],[9,11,1,4,4,3,4,3,1,414,1],[15,0,1,7,6,3,4,1,3,901,0],[15,2,7,0,6,3,4,4,2,797,0],[9,9,10,2,6,3,4,0,3,923,0],[5,13,12,9,6,3,4,3,3,403,1],[7,15,9,8,1,3,2,3,1,7,3],[6,4,5,5,1,3,4,3,2,877,0],[7,1,1,7,0,3,4,3,3,475,1],[2,4,4,0,6,3,4,1,3,69,4],[15,1,8,7,1,3,4,0,3,653,1],[9,5,10,0,6,3,4,3,3,869,0],[0,15,7,2,0,3,4,2,3,538,1],[6,16,5,3,6,3,4,2,3,1036,0],[8,17,7,0,6,3,4,1,3,1024,0],[15,17,9,4,2,3,4,1,3,746,0],[15,14,10,9,1,3,4,2,3,511,1],[2,13,12,0,6,3,3,3,0,115,4],[6,17,1,1,6,3,4,2,3,932,0],[2,0,3,10,6,3,0,1,0,160,4],[0,1,6,0,4,3,4,4,3,636,1],[0,5,5,3,2,3,4,1,3,679,1],[2,0,3,0,6,3,4,1,0,637,1],[2,14,12,0,6,1,4,2,3,542,1],[2,4,3,1,6,1,4,2,3,367,2],[6,16,8,1,6,3,2,0,3,531,1],[2,17,10,2,1,3,4,0,0,790,0],[12,16,3,0,6,3,1,1,0,213,2],[11,17,3,3,6,3,4,3,3,1013,0],[1,11,1,4,6,1,1,1,3,483,1],[9,5,7,7,3,3,0,3,3,44,3],[1,15,5,0,6,3,4,1,3,950,0],[15,11,5,0,2,3,4,4,3,953,0],[6,17,0,5,6,1,1,4,3,563,1],[15,0,2,0,6,3,4,4,3,915,0],[9,14,10,4,4,3,4,1,3,559,1],[6,5,1,6,6,2,4,3,3,159,4],[13,17,12,6,6,2,4,3,3,196,2],[7,4,7,10,6,3,4,3,3,449,1],[4,14,5,5,6,3,0,4,3,494,1],[13,17,7,3,6,3,4,0,3,1028,0],[12,15,1,0,6,2,4,1,3,181,2],[1,17,13,5,6,3,4,2,3,982,0],[2,17,9,0,1,3,4,3,3,1035,0],[15,16,12,0,0,3,4,0,3,711,1],[12,1,13,4,6,3,2,0,2,152,4],[15,2,3,7,6,3,4,3,3,719,1],[0,9,11,4,6,3,4,1,3,570,1],[7,17,1,6,6,3,2,3,3,489,1],[6,6,11,1,6,3,4,2,2,117,4],[4,9,5,2,2,3,1,4,3,300,2],[14,4,12,7,6,3,4,2,3,618,1],[15,16,12,1,6,3,4,4,3,586,1],[2,9,14,0,6,3,0,2,3,54,3],[2,14,12,4,1,3,4,1,3,605,1],[0,10,7,0,6,3,0,0,2,156,4],[6,17,8,7,5,3,0,3,3,228,2],[11,4,5,7,6,3,4,2,3,964,0],[14,17,2,5,6,3,4,0,2,958,0],[15,2,3,5,6,3,4,1,3,845,0],[0,17,7,2,1,3,4,2,3,1055,0],[12,0,1,0,0,1,4,2,3,241,2],[2,6,10,0,6,1,4,1,3,609,1],[5,6,1,1,6,3,2,4,1,110,4],[6,4,10,0,1,3,4,1,2,697,1],[13,6,3,0,6,3,0,1,3,364,2],[2,9,2,3,2,3,2,2,3,500,1],[15,16,8,2,6,3,4,4,3,952,0],[6,17,6,0,1,3,4,2,3,980,0],[14,0,6,1,1,2,4,1,3,146,4],[12,6,9,10,6,3,4,0,2,89,4],[5,16,5,7,6,3,0,3,3,856,0],[5,11,8,5,1,3,4,2,3,792,0],[9,16,13,2,1,0,4,3,3,180,2],[8,1,5,0,6,3,1,4,3,521,1],[13,2,3,3,6,3,4,1,3,593,1],[2,10,4,9,4,3,1,0,3,15,3],[9,17,10,2,1,3,4,3,3,1014,0],[5,16,1,0,6,3,4,3,3,1018,0],[13,17,5,0,1,3,4,3,3,1089,0],[7,17,5,4,6,3,4,4,3,1033,0],[9,17,3,0,0,3,4,4,2,709,1],[7,10,5,5,6,3,4,4,0,130,4],[9,4,8,2,6,3,4,3,0,562,1],[9,14,7,9,1,3,4,2,3,575,1],[12,15,9,0,1,3,4,1,2,178,2],[2,17,10,4,4,3,2,2,1,383,2],[13,17,3,7,6,3,4,3,3,940,0],[0,17,1,5,6,3,4,1,3,1106,0],[9,17,5,5,4,3,4,1,3,1082,0],[8,15,2,0,5,3,4,3,0,65,4],[7,12,7,5,6,3,4,3,3,17,3],[14,1,6,5,2,3,4,1,3,541,1],[13,17,2,1,1,3,4,1,3,712,1],[0,3,5,5,2,0,4,1,3,211,2],[7,4,5,9,6,3,4,3,3,796,0],[15,3,1,4,6,3,4,1,3,824,0],[2,17,6,0,6,3,1,4,2,755,0],[14,10,5,4,1,3,4,0,3,229,2],[4,9,1,3,2,3,0,3,0,137,4],[11,2,8,0,6,3,4,1,1,510,1],[12,0,1,0,4,3,4,3,3,482,1],[2,1,9,0,6,3,4,1,3,904,0],[6,11,3,2,6,3,0,0,3,646,1],[11,0,5,2,4,3,4,1,1,450,1],[14,2,2,2,5,0,4,1,3,59,4],[0,17,1,2,6,3,1,4,3,937,0],[9,13,9,7,2,3,4,3,2,230,2],[11,9,7,9,1,3,4,0,3,762,0],[11,17,9,4,6,3,2,1,3,832,0],[9,0,6,7,1,3,4,3,3,613,1],[6,17,5,10,6,3,4,2,3,922,0],[2,5,9,3,6,3,4,0,2,435,1],[15,14,2,0,6,3,4,2,3,866,0],[9,17,5,1,2,1,4,3,3,603,1],[0,7,7,9,1,3,0,3,3,31,3],[1,16,10,0,6,3,4,0,3,1000,0],[2,14,5,5,6,3,4,1,2,960,0],[9,9,0,2,6,1,4,4,3,558,1],[6,15,5,0,1,3,4,3,3,883,0],[0,17,10,0,6,3,4,2,3,1090,0],[13,11,9,5,6,3,4,3,1,434,1],[14,17,7,6,6,3,4,4,3,806,0],[12,2,2,4,0,3,2,1,2,129,4],[4,0,10,7,6,3,3,1,3,126,4],[2,2,1,4,4,1,2,1,3,321,2],[2,4,1,7,6,3,0,1,3,794,0],[5,4,5,2,1,1,2,0,3,409,1],[11,11,1,3,6,3,4,4,0,632,1],[6,0,8,1,6,1,4,1,3,380,2],[13,17,7,0,6,3,2,0,3,992,0],[9,16,2,0,6,3,4,3,2,910,0],[4,15,10,0,6,1,4,0,3,269,2],[7,17,2,2,6,3,4,3,3,974,0],[2,11,1,10,2,0,4,2,3,101,4],[15,14,4,2,6,3,2,1,3,46,3],[8,16,8,9,6,3,4,1,3,565,1],[4,10,10,5,6,3,4,2,3,135,4],[14,3,0,9,6,3,4,1,3,498,1],[13,11,7,5,6,3,4,2,3,972,0],[14,1,5,0,5,3,4,4,3,305,2],[2,17,6,5,6,3,3,0,3,516,1],[15,17,12,0,6,3,1,3,3,889,0],[13,16,0,5,6,3,1,1,3,592,1],[9,4,7,4,0,3,0,0,3,467,1],[15,16,2,3,6,3,0,1,3,763,0],[8,16,7,5,5,3,4,0,3,199,2],[11,4,10,3,1,3,4,1,3,756,0],[2,9,5,2,6,3,4,3,3,1093,0],[14,17,12,4,1,2,4,3,3,368,2],[4,1,5,5,6,3,4,1,1,427,1],[13,16,8,5,6,3,4,2,3,908,0],[1,5,8,0,6,3,4,1,3,837,0],[5,17,9,7,1,3,4,1,3,780,0],[6,17,6,5,0,2,4,4,3,388,2],[15,1,3,3,4,3,4,1,2,358,2],[0,2,2,0,1,3,4,3,3,850,0],[8,11,13,0,6,3,1,3,0,191,2],[0,9,5,3,6,3,0,0,3,898,0],[2,17,12,0,1,3,4,3,3,1040,0],[1,15,1,0,6,3,4,4,3,775,0],[6,0,12,2,6,3,1,0,1,183,2],[9,2,13,5,5,1,0,3,3,79,4],[2,1,8,3,6,3,4,3,3,913,0],[2,17,9,2,6,3,4,3,3,1054,0],[6,16,0,5,6,3,4,1,3,965,0],[0,4,7,2,6,3,4,1,3,1002,0],[2,4,7,2,4,3,4,3,3,890,0],[13,0,13,9,1,3,4,3,3,355,2],[9,13,7,0,6,3,4,1,2,765,0],[2,0,14,0,0,3,4,4,0,35,3],[15,17,10,7,2,3,4,3,3,891,0],[7,17,7,2,1,3,3,3,0,168,2],[15,9,0,7,6,2,2,3,3,253,2],[5,17,10,4,1,3,4,3,2,753,0],[6,9,5,0,6,0,4,3,3,536,1],[2,16,10,9,1,3,4,4,3,798,0],[0,5,5,3,1,3,4,2,1,376,2],[11,0,7,6,1,3,4,0,3,406,1],[11,11,5,5,4,3,4,3,3,1006,0],[7,11,2,6,6,3,2,4,3,259,2],[0,16,2,4,6,3,4,0,3,951,0],[11,17,2,5,6,1,4,2,3,924,0],[2,17,2,5,6,3,4,1,2,1061,0],[0,10,7,0,6,1,4,3,3,239,2],[4,13,7,0,6,3,4,0,3,600,1],[12,11,1,2,2,1,4,3,3,279,2],[6,2,7,3,4,1,4,2,3,362,2],[12,9,12,2,1,3,4,4,2,237,2],[9,9,7,3,6,3,4,3,3,998,0],[9,0,5,0,6,2,4,1,3,644,1],[11,5,5,5,6,3,4,3,2,852,0],[9,16,1,7,6,3,4,2,3,945,0],[15,4,13,5,6,3,4,1,3,851,0],[0,13,2,6,6,3,4,3,3,412,1],[2,0,8,7,1,3,4,4,3,723,0],[8,3,8,2,6,3,4,3,3,480,1],[6,8,1,3,1,3,2,1,3,138,4],[5,16,13,0,6,1,0,4,3,336,2],[15,13,6,9,6,3,4,1,3,553,1],[9,5,6,7,1,2,4,0,3,165,4],[11,2,13,7,6,3,3,4,3,134,4],[2,2,6,2,6,3,4,3,0,512,1],[11,0,7,5,1,3,4,0,0,537,1],[11,5,2,3,6,3,4,0,3,667,1],[6,9,7,0,6,1,4,1,3,919,0],[14,4,3,0,6,3,4,3,3,895,0],[1,9,3,2,6,3,2,1,3,695,1],[5,9,5,5,0,3,4,0,3,874,0],[15,8,5,0,6,3,4,3,3,466,1],[9,12,2,2,6,3,4,1,3,16,3],[12,16,0,7,2,0,4,2,3,80,4],[13,8,1,10,6,3,2,4,3,81,4],[0,17,13,5,5,3,4,0,2,221,2],[0,16,8,0,6,3,2,4,3,894,0],[2,3,1,3,5,3,4,3,3,218,2],[14,0,7,1,6,1,4,2,3,392,1],[4,17,6,5,0,3,2,0,2,283,2],[6,4,1,2,1,2,0,4,3,204,2],[2,9,0,7,6,3,4,3,1,523,1],[9,9,5,0,6,3,2,3,3,1017,0],[8,17,10,2,6,3,4,0,3,863,0],[2,11,5,0,6,1,4,3,3,1049,0],[5,17,3,5,2,3,4,0,3,754,0],[7,14,2,4,6,3,4,1,3,583,1],[4,13,5,5,5,3,4,0,3,141,4],[11,1,7,7,6,3,4,1,0,572,1],[15,8,13,9,1,3,4,0,3,103,4],[1,1,1,0,4,3,4,4,3,721,1],[1,15,1,4,6,3,4,3,3,707,1],[5,14,7,2,4,3,4,3,1,280,2],[8,2,2,5,1,3,1,0,3,251,2],[8,9,10,5,1,1,4,1,3,395,1],[8,16,8,0,4,1,4,3,3,354,2],[6,5,8,0,6,0,4,2,3,198,2],[13,2,6,2,6,1,2,1,3,275,2],[9,4,8,5,1,3,1,3,3,566,1],[15,11,8,4,1,3,4,4,3,805,0],[1,9,7,2,6,3,4,0,3,979,0],[2,3,2,7,6,3,4,2,3,741,0],[6,17,10,2,0,3,4,1,3,948,0],[11,5,2,2,6,3,4,4,3,698,1],[2,9,5,10,6,3,4,3,2,687,1],[5,17,13,3,6,3,2,2,2,452,1],[5,1,3,4,6,3,4,3,3,656,1],[13,3,1,5,4,3,4,1,2,393,1],[0,15,7,7,6,0,4,4,3,177,2],[0,14,3,3,6,3,4,3,0,415,1],[6,17,8,3,6,3,4,1,3,1057,0],[9,0,0,4,6,3,4,4,3,674,1],[15,3,1,5,4,3,4,0,1,301,2],[15,9,9,2,2,3,4,3,3,571,1],[6,16,5,2,6,3,4,2,3,1062,0],[13,15,2,7,6,3,0,2,3,293,2],[2,13,5,2,6,3,4,4,3,969,0],[13,17,5,7,6,3,4,3,3,1084,0],[9,17,11,5,4,3,4,0,1,265,2],[12,10,11,0,4,3,1,2,3,45,3],[9,15,2,5,6,3,4,1,0,425,1],[1,16,7,6,6,3,2,4,3,456,1],[6,0,0,2,6,3,1,2,3,438,1],[11,0,3,5,6,3,4,0,3,823,0],[6,17,0,5,0,3,4,4,3,880,0],[9,17,2,3,0,3,4,3,2,725,0],[2,16,0,4,6,3,4,2,3,907,0],[5,4,8,6,6,3,4,0,3,359,2],[11,11,6,4,0,3,4,1,3,651,1],[6,17,5,8,0,3,4,1,3,26,3],[7,17,6,5,6,1,4,3,3,749,0],[15,14,5,2,1,3,4,3,3,917,0],[5,0,5,0,6,3,4,1,3,1009,0],[13,17,3,2,6,0,2,1,3,215,2],[13,9,7,5,1,3,1,1,3,640,1],[2,0,10,3,2,3,1,3,3,390,1],[2,16,7,5,6,3,4,3,3,1095,0],[14,16,13,0,5,3,4,2,3,200,2],[8,11,5,9,6,3,4,3,3,766,0],[0,9,2,5,6,1,4,4,3,772,0],[11,17,8,10,6,0,2,4,3,122,4],[5,11,10,2,0,3,4,0,3,635,1],[6,5,10,4,6,3,4,2,3,660,1],[14,15,0,0,2,3,4,3,1,174,2],[6,16,5,8,6,3,4,2,3,25,3],[2,1,6,4,6,3,0,1,2,418,1],[8,0,11,0,1,3,4,2,3,217,2],[4,14,5,6,4,3,4,0,3,195,2],[2,2,5,5,4,3,4,1,0,625,1],[0,17,1,7,6,1,4,1,3,963,0],[15,17,5,10,1,3,0,3,2,479,1],[13,9,7,2,6,3,4,1,3,955,0],[0,0,14,4,6,3,0,2,3,42,3],[7,5,10,1,6,3,3,4,0,58,4],[1,2,2,0,0,3,2,3,0,244,2],[11,17,5,5,0,3,4,0,3,1067,0],[15,14,5,3,6,3,4,3,3,971,0],[0,14,8,1,6,3,4,3,2,422,1],[2,1,13,2,2,2,4,4,3,167,2],[15,13,0,2,4,3,4,1,3,474,1],[13,17,7,2,6,3,4,4,1,724,0],[1,17,2,7,6,3,4,3,3,1042,0],[11,11,1,7,2,3,4,1,3,737,0],[2,17,9,3,6,3,0,3,3,885,0],[0,3,0,0,4,3,0,1,0,185,2],[1,17,2,3,0,3,4,0,0,515,1],[0,17,2,9,6,3,4,4,2,835,0],[0,2,7,7,6,3,4,1,3,918,0],[1,17,5,5,4,3,4,1,3,1080,0],[7,16,10,9,6,3,4,1,3,700,1],[13,0,5,6,6,3,4,3,3,557,1],[9,16,13,4,6,3,4,3,3,838,0],[9,17,13,9,6,3,4,3,3,887,0],[9,9,5,0,1,1,4,4,3,840,0],[0,16,0,5,1,3,4,2,3,855,0],[6,17,10,2,6,3,4,1,2,973,0],[4,9,5,0,6,3,4,1,0,616,1],[1,17,5,7,1,0,4,3,3,471,1],[15,4,5,5,6,3,2,4,3,933,0],[14,15,5,6,6,3,3,4,3,102,4],[12,17,6,2,1,2,4,1,3,242,2],[8,3,12,5,4,3,1,2,0,84,4],[13,13,5,3,0,3,3,3,3,147,4],[2,1,12,0,1,3,4,1,3,800,0],[15,9,5,4,2,2,4,3,3,379,2],[11,11,5,0,2,0,4,2,3,281,2],[2,16,1,5,1,3,4,2,0,717,1],[2,17,10,4,6,3,4,0,3,1075,0],[15,5,8,2,6,3,1,4,3,436,1],[11,16,7,9,4,3,4,3,3,758,0],[14,17,3,0,6,3,0,3,3,931,0],[0,16,3,0,6,3,4,1,3,1011,0],[0,11,13,3,6,3,4,2,3,789,0],[2,17,8,10,6,3,4,4,2,623,1],[15,16,9,0,6,3,4,0,3,927,0],[0,11,9,4,6,3,1,4,2,349,2],[0,17,5,9,4,3,4,3,3,1008,0],[12,8,11,2,6,3,4,3,3,71,4],[14,17,10,3,6,3,4,0,3,1015,0],[11,17,5,5,0,3,4,1,3,1081,0],[6,2,5,3,2,3,4,0,3,658,1],[5,17,10,3,6,3,4,1,2,876,0],[6,0,12,5,6,3,1,3,3,533,1],[0,1,5,0,0,3,4,3,3,949,0],[0,17,9,9,6,3,4,2,3,884,0],[0,4,5,0,5,3,2,1,3,295,2],[7,9,1,5,6,1,0,1,3,451,1],[0,4,5,0,6,3,4,3,3,1086,0],[9,17,5,10,6,3,4,3,3,967,0],[2,17,6,5,6,2,4,0,3,708,1],[11,1,7,4,6,3,4,3,3,925,0],[1,3,7,5,2,3,4,0,3,584,1],[2,17,2,9,4,3,4,2,2,645,1],[13,6,5,1,2,1,4,2,3,161,4],[14,17,5,4,6,3,4,2,2,1007,0],[2,17,8,3,0,3,2,3,2,620,1],[7,2,1,0,6,3,4,1,3,811,0],[2,5,5,0,6,3,4,0,3,1025,0],[1,2,8,3,6,3,2,2,1,231,2],[11,5,0,5,4,3,4,0,3,468,1],[11,17,9,0,2,3,2,1,2,481,1],[5,9,0,1,1,3,4,4,3,366,2],[1,17,13,5,4,3,0,2,0,287,2],[6,17,5,0,6,3,4,1,3,1111,0],[2,6,2,5,6,3,4,4,3,786,0],[4,17,5,2,6,3,4,3,3,1021,0],[11,16,7,10,6,3,0,3,3,509,1],[4,17,2,3,4,3,4,1,3,611,1],[1,17,6,0,6,3,4,4,3,1043,0],[5,17,5,2,0,3,1,1,3,778,0],[0,13,1,5,6,1,4,3,3,699,1],[6,11,5,3,6,3,4,1,3,1065,0],[1,9,1,6,0,3,4,4,3,346,2],[14,7,2,0,4,3,4,1,3,34,3],[2,17,6,1,4,3,4,0,3,686,1],[2,17,2,5,6,3,4,1,3,1104,0],[15,11,5,0,4,3,4,0,3,993,0],[2,1,10,0,6,3,0,0,3,777,0],[5,5,5,5,6,3,4,2,2,669,1],[7,1,5,4,1,3,4,4,0,347,2],[4,13,7,0,4,3,2,3,3,307,2],[2,17,3,0,2,3,4,0,2,770,0],[6,17,9,10,6,3,4,3,2,476,1],[15,7,14,2,0,3,1,3,3,6,3],[13,17,5,7,6,3,4,0,2,961,0],[1,11,0,4,6,3,4,3,3,862,0],[2,3,7,5,6,2,1,0,3,272,2],[1,17,13,10,0,1,4,3,3,240,2],[2,11,2,2,6,3,4,0,3,996,0],[15,17,5,2,6,3,1,3,3,1047,0],[15,1,5,10,6,3,4,3,1,327,2],[5,16,5,7,6,0,4,3,3,353,2],[0,2,7,5,6,3,4,1,0,702,1],[11,14,10,5,6,3,2,0,3,657,1],[1,17,9,4,6,3,1,3,3,713,1],[9,16,5,9,4,3,4,2,3,783,0],[9,14,5,5,6,1,4,0,3,791,0],[1,17,5,2,6,3,4,0,3,1099,0],[13,11,12,4,1,3,4,1,3,595,1],[2,15,6,9,6,3,2,1,3,384,2],[5,11,1,0,6,1,4,4,3,747,0],[2,6,5,5,4,0,3,3,3,66,4],[14,17,5,7,4,3,4,4,3,985,0],[1,13,0,0,6,3,4,1,3,745,0],[9,15,8,7,2,3,4,3,3,371,2],[12,16,6,9,1,3,4,2,3,311,2],[2,17,11,0,6,3,4,4,3,909,0],[8,11,5,3,4,3,0,3,3,430,1],[14,17,2,10,2,3,4,4,3,426,1],[14,17,1,6,6,3,2,3,3,634,1],[15,11,3,5,6,3,4,1,3,975,0],[14,4,0,9,6,3,4,1,2,443,1],[11,17,8,9,6,3,2,2,3,788,0],[14,2,5,7,6,3,3,0,3,266,2],[15,17,5,3,0,3,4,2,3,1010,0],[14,11,8,4,6,2,4,1,3,419,1],[1,13,9,4,2,3,0,4,3,179,2],[1,11,7,9,6,3,2,0,3,704,1],[9,17,5,10,6,3,3,3,3,325,2],[2,13,12,0,6,3,4,4,3,757,0],[14,17,1,3,1,3,2,4,3,825,0],[14,5,5,0,6,3,0,3,3,802,0],[1,0,7,10,4,3,4,1,2,252,2],[2,3,5,0,6,3,4,1,3,1060,0],[11,3,1,2,6,3,4,1,3,843,0],[11,15,1,5,6,2,4,3,3,343,2],[8,3,2,7,1,3,4,0,3,302,2],[0,15,8,4,0,3,4,1,3,463,1],[2,15,3,5,6,3,4,1,3,781,0],[14,17,5,7,6,3,4,3,3,1098,0],[5,16,6,10,0,1,4,4,3,154,4],[9,9,5,0,6,3,4,1,3,1092,0],[5,14,7,5,0,3,4,3,3,664,1],[4,11,1,0,6,3,4,1,3,861,0],[8,14,5,7,6,3,2,1,3,488,1],[2,11,7,4,0,3,3,3,3,286,2],[6,13,7,4,6,3,4,4,3,782,0],[8,4,5,3,1,3,0,3,3,440,1],[15,6,5,0,6,3,4,4,3,921,0],[8,17,5,9,2,3,1,3,0,210,2],[4,17,9,2,4,3,2,4,3,314,2],[1,17,5,9,0,2,0,1,3,297,2],[0,16,3,7,1,3,4,2,3,740,0],[9,15,12,7,4,3,4,1,2,225,2],[0,17,6,0,1,3,4,3,3,1044,0],[14,17,5,5,0,3,4,1,3,1071,0],[1,17,13,0,6,3,4,3,2,911,0],[7,11,12,0,0,3,3,3,3,133,4],[2,8,5,2,6,3,4,4,3,389,1],[0,15,1,5,6,3,4,0,3,831,0],[6,15,12,0,1,3,4,2,3,473,1],[2,9,4,0,6,3,4,3,2,63,4],[13,3,5,8,2,3,4,1,3,12,3],[9,17,8,10,6,3,4,3,3,804,0],[7,11,6,7,1,3,4,1,3,564,1],[14,16,3,0,6,3,4,1,3,966,0],[0,17,1,2,6,1,4,3,3,999,0],[2,16,7,2,1,3,4,1,1,690,1],[2,7,8,7,0,3,2,0,3,27,3],[2,14,9,5,6,3,4,1,3,849,0],[14,14,5,0,2,3,4,4,3,736,0],[14,17,5,5,6,3,4,2,3,1105,0],[9,17,5,10,6,3,2,2,3,739,0],[11,0,13,4,0,3,4,2,3,386,2],[9,16,2,5,6,1,4,1,3,841,0],[6,0,9,6,6,3,4,0,3,319,2],[7,11,5,5,6,3,0,4,3,810,0],[1,8,2,0,6,3,4,1,3,284,2],[13,17,3,5,0,3,4,1,3,854,0],[2,2,2,0,5,3,3,2,3,72,4],[2,13,7,9,6,3,4,0,3,768,0],[13,5,1,5,1,3,4,4,3,596,1],[14,16,5,0,6,3,2,0,3,991,0],[9,11,5,1,2,3,1,3,3,405,1],[2,17,5,3,6,1,4,3,3,1072,0],[15,11,7,4,3,3,4,1,3,75,4],[0,9,1,6,5,2,4,2,3,62,4],[13,9,3,4,6,3,4,0,1,333,2],[5,0,13,3,2,1,4,3,3,206,2],[11,13,13,7,6,3,0,4,3,312,2],[11,4,2,5,6,1,4,4,3,659,1],[9,4,6,10,6,3,4,0,3,396,1],[8,17,2,10,6,3,2,4,3,304,2],[11,17,7,5,6,3,4,4,0,947,0],[13,6,3,4,6,3,4,1,3,462,1],[2,10,9,4,1,3,4,4,3,143,4],[0,17,13,0,4,3,3,0,3,263,2],[1,15,7,3,0,3,2,1,3,344,2],[2,16,7,5,6,3,0,1,3,1003,0],[0,6,5,2,5,3,4,0,2,139,4],[11,10,9,9,6,3,0,3,3,98,4],[8,16,11,1,1,3,4,3,3,173,2],[2,16,13,5,6,3,4,2,3,939,0],[1,0,10,3,6,3,4,1,3,834,0],[1,13,13,1,6,3,4,1,2,254,2],[1,17,5,1,6,3,4,4,2,879,0],[14,3,5,0,6,3,4,1,3,987,0],[15,14,1,0,6,3,2,1,3,815,0],[2,4,5,0,6,3,1,0,3,942,0],[9,15,10,5,6,3,1,4,3,437,1],[6,4,5,0,0,3,4,3,3,954,0],[9,13,8,1,6,3,4,4,3,457,1],[12,14,10,1,6,3,4,4,3,267,2],[6,11,13,0,1,3,4,1,3,828,0],[1,17,0,2,6,3,4,4,3,976,0],[6,17,5,9,0,3,4,3,3,978,0],[15,4,7,10,6,3,4,2,3,569,1],[2,11,8,6,6,3,4,0,2,445,1],[2,2,11,0,5,3,4,2,3,107,4],[0,17,12,3,6,3,1,1,2,573,1],[4,13,3,3,6,3,4,3,3,360,2],[2,6,5,0,1,3,2,0,3,703,1],[0,4,11,0,4,3,4,4,3,370,2],[13,17,8,4,2,1,4,0,3,459,1],[1,17,8,10,2,3,4,1,2,331,2],[8,7,0,4,6,3,4,1,3,28,3],[9,5,5,5,6,3,0,3,2,597,1],[13,16,5,0,6,3,1,1,1,518,1],[6,17,7,2,6,3,4,3,0,946,0],[14,9,6,0,4,3,4,1,3,735,0],[11,9,8,7,0,3,4,1,3,683,1],[5,6,7,5,6,1,2,3,3,345,2],[15,17,7,4,6,1,2,2,3,764,0],[7,0,12,0,2,3,4,2,3,334,2],[0,17,0,3,6,3,4,2,3,986,0],[1,17,10,8,6,3,4,0,0,19,3],[6,17,2,4,0,1,4,0,3,607,1],[0,11,8,5,2,3,0,4,3,535,1],[2,11,13,5,6,3,0,0,3,730,0],[0,4,9,0,0,3,4,0,3,608,1],[5,4,10,1,6,3,4,0,3,528,1],[15,9,4,0,6,3,4,3,3,70,4],[9,4,1,2,2,3,4,0,3,642,1],[7,1,5,0,6,1,0,1,3,495,1],[13,16,7,7,5,3,4,2,3,222,2],[15,17,1,0,6,3,0,3,3,1050,0],[15,17,10,7,1,3,1,1,3,760,0],[13,4,4,4,6,1,0,3,3,32,3],[15,5,5,1,1,3,2,4,3,372,2],[0,17,7,9,6,3,4,0,2,929,0],[11,17,0,0,3,3,4,3,0,56,4],[1,17,2,1,1,3,2,1,2,423,1],[5,1,9,0,0,3,4,4,3,429,1],[14,17,7,4,4,1,4,2,3,680,1],[12,16,5,7,1,3,2,2,3,458,1],[4,16,5,2,6,3,4,3,3,912,0],[13,11,10,0,2,3,4,3,3,722,1],[8,10,7,4,6,3,0,0,2,78,4],[9,17,5,9,6,3,4,3,3,1085,0],[2,4,6,2,4,3,4,1,3,701,1],[5,11,8,7,6,3,4,0,3,813,0],[6,11,0,2,6,3,1,2,3,555,1],[6,17,12,3,6,3,1,0,2,501,1],[2,11,10,2,1,3,4,1,3,959,0],[6,16,8,4,6,3,4,3,0,643,1],[2,4,5,0,6,0,4,3,3,549,1],[9,17,12,5,6,3,4,0,3,1012,0],[11,17,1,3,6,3,4,2,3,1058,0],[0,0,9,7,6,3,4,3,3,726,0],[0,11,5,9,6,3,0,3,3,878,0],[9,0,5,0,1,3,0,1,2,602,1],[11,17,2,3,3,3,4,0,3,77,4],[12,11,7,0,6,3,4,4,3,816,0],[0,17,8,4,6,3,4,3,3,1070,0],[1,13,6,2,6,3,4,1,3,672,1],[15,17,13,7,4,3,3,0,3,188,2],[15,4,1,1,6,3,4,3,3,752,0],[0,3,3,3,6,1,4,1,3,444,1],[13,8,8,5,2,3,4,0,3,114,4],[5,8,5,6,6,3,2,1,3,99,4],[8,6,5,5,6,3,1,1,0,197,2],[11,17,5,3,4,3,1,2,3,787,0],[5,0,8,5,4,1,4,0,3,338,2],[6,3,1,0,1,3,4,3,3,820,0],[14,8,8,1,6,3,4,2,3,120,4],[15,16,4,3,6,3,4,2,3,60,4],[15,0,5,9,4,3,4,3,3,727,0],[15,15,5,5,6,3,4,4,3,920,0],[2,16,0,7,1,3,4,1,3,853,0],[0,6,5,9,6,3,4,1,3,774,0],[12,2,11,0,4,3,4,2,3,149,4],[9,5,5,0,6,3,3,4,3,316,2],[12,5,3,5,6,2,2,1,3,105,4],[2,11,10,9,2,3,4,0,3,622,1],[2,15,12,3,6,3,4,1,3,606,1],[2,5,12,5,6,3,0,2,3,493,1],[4,11,3,6,6,3,4,4,2,169,2],[7,17,7,5,6,3,4,2,3,1037,0],[14,14,12,7,6,3,4,4,3,539,1],[15,17,3,4,2,3,4,2,3,744,0],[11,17,1,4,6,3,4,2,3,1059,0],[1,4,13,1,5,1,4,1,3,74,4],[2,9,10,0,6,3,0,3,3,930,0],[9,17,0,0,1,3,2,1,1,472,1],[9,11,8,3,2,3,4,2,3,601,1],[13,0,6,4,6,3,2,4,3,408,1],[1,2,7,9,1,0,4,2,3,131,4],[0,6,5,7,6,3,4,2,3,814,0],[0,17,3,7,0,3,4,3,3,882,0],[12,17,0,4,0,3,4,1,3,490,1],[0,17,0,5,6,3,3,1,3,497,1],[11,9,5,3,6,3,4,0,3,1023,0],[12,2,8,1,0,3,4,0,3,170,2],[11,5,1,5,4,0,4,4,3,140,4],[14,13,8,0,6,3,2,0,3,578,1],[1,3,5,7,6,2,4,4,3,348,2],[0,5,2,7,1,2,4,3,3,234,2],[11,13,1,5,6,0,4,1,3,257,2],[15,4,11,0,5,3,4,0,3,111,4],[11,2,10,0,4,3,1,2,3,363,2],[1,7,5,5,6,3,2,3,3,47,3],[8,3,7,10,4,3,0,3,3,108,4],[0,9,10,4,6,3,2,3,3,817,0],[6,15,3,3,0,3,4,1,3,357,2],[12,2,5,0,0,3,4,4,3,491,1],[11,13,5,5,6,3,4,3,3,994,0],[2,1,9,9,1,2,4,1,3,192,2],[9,5,6,5,6,3,4,3,3,751,0],[9,17,1,2,6,3,4,0,3,1076,0],[4,1,7,7,6,3,2,1,3,428,1],[2,17,13,7,6,0,4,1,3,350,2],[7,14,7,3,6,3,4,3,3,705,1],[5,17,8,5,2,3,4,2,3,819,0],[6,17,7,4,1,3,4,4,0,738,0],[11,11,6,2,5,3,2,3,3,163,4],[5,9,4,9,0,3,4,3,3,38,3],[13,5,1,0,6,3,4,3,3,821,0],[2,10,5,0,6,3,4,4,2,315,2],[11,14,13,4,3,3,4,4,3,43,3],[0,0,9,0,6,3,1,3,2,401,1],[5,1,0,3,6,3,1,3,3,369,2],[14,4,2,3,6,3,4,2,3,769,0],[11,11,1,7,4,3,4,3,3,812,0],[2,3,11,6,6,3,4,4,2,121,4],[9,1,5,0,6,3,4,0,3,1029,0],[1,13,3,5,2,3,4,0,3,417,1],[2,10,11,7,6,1,4,3,3,86,4],[15,17,6,1,0,3,4,3,2,470,1],[2,11,1,3,1,1,2,3,3,560,1],[0,15,12,1,3,3,2,3,3,30,3],[6,17,7,1,6,3,2,1,3,870,0],[15,2,1,5,2,3,1,1,1,187,2],[6,4,5,0,6,3,4,4,3,1051,0],[13,4,9,3,6,3,4,3,3,626,1],[6,9,2,2,2,3,1,3,3,424,1],[11,11,1,5,6,3,1,2,2,582,1],[6,11,2,4,6,3,4,2,3,899,0],[7,17,8,0,2,3,4,3,3,829,0],[4,1,5,7,6,3,4,2,3,639,1],[2,1,11,0,5,3,4,1,3,132,4],[4,10,10,7,6,3,4,3,1,68,4],[15,13,7,3,1,3,0,1,3,506,1],[6,4,5,5,6,3,0,1,3,935,0],[6,17,13,3,1,3,4,1,2,677,1],[13,9,2,2,6,3,4,3,2,676,1],[4,1,1,4,6,3,4,1,3,577,1],[1,14,0,6,6,3,4,0,0,157,4],[11,4,5,0,6,3,4,3,3,1078,0],[15,17,14,0,6,3,4,3,3,97,4],[7,5,5,5,6,3,4,2,3,785,0],[6,1,0,6,6,3,4,4,1,151,4],[2,17,8,4,6,3,1,3,3,943,0],[5,9,12,7,4,3,4,2,1,182,2],[9,13,9,3,6,3,4,3,0,308,2],[0,13,9,1,6,3,0,3,3,273,2],[11,15,5,4,1,3,2,2,0,243,2],[1,4,10,1,6,3,1,3,3,391,1],[7,6,5,7,6,1,4,3,3,407,1],[9,13,2,1,6,3,4,0,3,477,1],[15,2,12,4,6,2,4,3,3,258,2],[6,2,8,4,6,3,1,2,3,442,1],[11,16,12,5,6,3,4,0,3,905,0],[7,7,6,5,0,3,4,1,3,29,3],[9,17,6,0,6,3,4,1,3,1074,0],[12,17,7,4,1,3,1,3,3,525,1],[11,17,5,9,6,3,4,3,3,1088,0],[14,4,8,10,6,3,0,2,3,264,2],[6,2,7,0,1,3,4,1,1,504,1],[12,10,13,0,4,3,4,2,2,61,4],[2,17,5,5,1,3,4,1,3,1109,0],[11,13,5,4,4,0,4,2,3,153,4],[2,17,1,5,6,3,1,1,3,1048,0],[0,2,10,7,6,3,4,1,3,833,0],[12,14,5,0,6,3,4,3,3,784,0],[4,14,2,5,1,3,4,1,3,460,1],[11,17,8,3,6,3,4,4,3,1020,0],[5,1,10,9,6,3,4,3,1,290,2],[12,16,5,4,0,3,1,3,3,352,2],[8,11,0,10,6,3,4,4,3,256,2],[8,17,5,4,6,1,4,3,3,818,0],[2,11,14,5,6,3,4,2,3,73,4]]};
+const N = D.d.length;
+const TIER_ORDER = ['Legendary','Epic','Rare','Uncommon','Common'];
+const counts = D.n.map((_, k) => { const c = new Array(D.v[k].length).fill(0); D.d.forEach(r => c[r[k]]++); return c; });
+const tierCount = {}; D.d.forEach(r => { const t = D.t[r[10]]; tierCount[t] = (tierCount[t] || 0) + 1; });
+const trait = (id, k) => D.v[k][D.d[id-1][k]];
+const rankOf = id => D.d[id-1][9];
+const tierOf = id => D.t[D.d[id-1][10]];
+const pct = (k, vi) => (counts[k][vi] / N * 100).toFixed(2);
+const $ = s => document.querySelector(s);
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const COLS = 34;
+const sp = id => { const i = id - 1; return `<span class="sp" style="--c:${i % COLS};--r:${Math.floor(i / COLS)}"></span>`; };
+
+/* placeholder links: keep them from jumping to the top until real URLs are set */
+document.querySelectorAll('a[data-link]').forEach(a => a.addEventListener('click', e => { if (a.getAttribute('href') === '#') e.preventDefault(); }));
+
+function describe(id) {
+  const body = trait(id, 0), head = trait(id, 1), eyes = trait(id, 2);
+  return [`${body} body`, head !== 'None' ? `${head} head` : 'no head item', `${eyes} eyes`].join(', ');
+}
+
+/* ---------- hero: lineup + scanner ---------- */
+const HERO = [664, 309, 809, 440, 149, 99, 1098];
+const stage = $('#stage'), beam = $('#beam');
+const figs = HERO.map((id, i) => {
+  const f = document.createElement('figure');
+  f.style.setProperty('--i', i);
+  f.tabIndex = 0;
+  f.setAttribute('role', 'group'); f.setAttribute('aria-label', `Bot Watchers #${id}`);
+  f.innerHTML = `${sp(id)}<span class="lock"></span>`;
+  stage.insertBefore(f, beam);
+  return { f, id };
+});
+let userLock = null, current = -1;
+function lock(i) {
+  if (i === current) return;
+  current = i;
+  figs.forEach((o, j) => o.f.classList.toggle('locked', j === i));
+  if (i >= 0) { $('#rdId').textContent = `Locked on #${figs[i].id}`; $('#rdTxt').textContent = describe(figs[i].id); }
+}
+figs.forEach((o, i) => {
+  o.f.addEventListener('pointerenter', () => { userLock = i; lock(i); });
+  o.f.addEventListener('pointerleave', () => { userLock = null; });
+  o.f.addEventListener('focus', () => { userLock = i; lock(i); });
+  o.f.addEventListener('blur', () => { userLock = null; });
+});
+lock(3);
+if (!reduce) {
+  let t0 = null, visible = true;
+  new IntersectionObserver(e => { visible = e[0].isIntersecting; }).observe(stage);
+  const PASS = 6500, START = 1700;
+  function tick(ts) {
+    if (t0 === null) t0 = ts;
+    const el = ts - t0 - START;
+    if (el > 0 && visible) {
+      beam.classList.add('on');
+      const w = stage.clientWidth, p = (el % PASS) / PASS;
+      const x = p * (w + 40) - 20;
+      beam.style.transform = `translateX(${x}px)`;
+      if (userLock === null) {
+        let best = -1, bd = Infinity;
+        figs.forEach((o, i) => {
+          if (getComputedStyle(o.f).display === 'none') return;
+          const r = o.f.getBoundingClientRect(), s = stage.getBoundingClientRect();
+          const d = Math.abs(r.left - s.left + r.width / 2 - x);
+          if (d < bd) { bd = d; best = i; }
+        });
+        lock(bd < stage.clientWidth * 0.07 ? best : current);
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+/* ---------- ticker ---------- */
+(function () {
+  const ids = [664, 309, 809, 149, 99, 1098, 193, 749, 119, 1040];
+  let html = '';
+  ids.forEach(id => { html += `<span>Hunting alpha before the crowd</span>${sp(id)}`; });
+  $('#track').innerHTML = html + html;
+})();
+
+/* ---------- gallery ---------- */
+const PAGE = 60;
+let order = Array.from({length: N}, (_, i) => i + 1), filtered = [], shown = PAGE;
+const grid = $('#grid'), fId = $('#fId'), fBody = $('#fBody'), fTier = $('#fTier');
+const bodyOrder = D.v[0].map((v, i) => [v, counts[0][i]]).sort((a, b) => b[1] - a[1]);
+fBody.innerHTML = '<option value="all">All colors</option>' + bodyOrder.map(([v, c]) => `<option value="${v}">${v} (${c})</option>`).join('');
+fTier.innerHTML = '<option value="all">All tiers</option>' + TIER_ORDER.map(t => `<option value="${t}">${t} (${tierCount[t]})</option>`).join('');
+
+function apply(resetShown = true) {
+  const q = fId.value.trim(), body = fBody.value, tier = fTier.value;
+  filtered = order.filter(id => (!q || String(id) === q) && (body === 'all' || trait(id, 0) === body) && (tier === 'all' || tierOf(id) === tier));
+  if (resetShown) shown = PAGE;
+  render();
+}
+function render() {
+  const frag = document.createDocumentFragment();
+  filtered.slice(0, shown).forEach(id => {
+    const li = document.createElement('li');
+    const hi = ['Legendary', 'Epic'].includes(tierOf(id));
+    li.innerHTML = `<button class="tile" type="button" data-id="${id}" aria-label="Open Bot Watchers #${id}, ${tierOf(id)}">
+      ${sp(id)}
+      <span class="meta"><span>#${id}</span><span class="t${hi ? ' hi' : ''}">${tierOf(id)}</span></span></button>`;
+    frag.appendChild(li);
+  });
+  grid.replaceChildren(frag);
+  $('#empty').hidden = filtered.length > 0;
+  $('#bMore').parentElement.hidden = shown >= filtered.length;
+  $('#count').textContent = filtered.length ? `Showing ${Math.min(shown, filtered.length).toLocaleString()} of ${filtered.length.toLocaleString()} Watchers` : '';
+}
+[fId, fBody, fTier].forEach(el => el.addEventListener('input', () => apply()));
+$('#bMore').addEventListener('click', () => { shown += PAGE; render(); });
+$('#bShuffle').addEventListener('click', () => {
+  for (let i = order.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
+  apply();
+});
+$('#bReset').addEventListener('click', () => {
+  fId.value = ''; fBody.value = 'all'; fTier.value = 'all';
+  order = Array.from({length: N}, (_, i) => i + 1); apply();
+});
+grid.addEventListener('click', e => { const b = e.target.closest('.tile'); if (b) openViewer(+b.dataset.id); });
+
+/* ---------- viewer ---------- */
+const dlg = $('#viewer'); let cur = 0;
+function openViewer(id) {
+  cur = id;
+  { const v = $('#vImg'), i = id - 1; v.style.setProperty('--c', i % COLS); v.style.setProperty('--r', Math.floor(i / COLS)); v.setAttribute('aria-label', `Bot Watchers #${id}`); }
+  $('#vName').textContent = `Bot Watchers #${id}`;
+  $('#vRank').textContent = `Rank ${rankOf(id)} of ${N.toLocaleString()}, ${tierOf(id)} tier`;
+  $('#vDl').innerHTML = D.n.map((n, k) => {
+    const vi = D.d[id-1][k];
+    return `<dt>${n}</dt><dd>${D.v[k][vi]} <small>${pct(k, vi)}% have this</small></dd>`;
+  }).join('');
+  if (!dlg.open) dlg.showModal();
+}
+function step(dir) {
+  const list = filtered.length ? filtered : order;
+  let i = list.indexOf(cur); if (i < 0) i = 0;
+  openViewer(list[(i + dir + list.length) % list.length]);
+}
+$('#vPrev').addEventListener('click', () => step(-1));
+$('#vNext').addEventListener('click', () => step(1));
+dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
+dlg.addEventListener('keydown', e => { if (e.key === 'ArrowLeft') step(-1); if (e.key === 'ArrowRight') step(1); });
+
+/* ---------- traits ---------- */
+const tabs = $('#tabs'), bars = $('#bars');
+D.n.forEach((n, k) => {
+  const b = document.createElement('button');
+  b.type = 'button'; b.role = 'tab'; b.textContent = n; b.setAttribute('aria-selected', k === 0);
+  b.addEventListener('click', () => { tabs.querySelectorAll('button').forEach((x, j) => x.setAttribute('aria-selected', j === k)); showTrait(k); });
+  tabs.appendChild(b);
+});
+function showTrait(k) {
+  const rows = D.v[k].map((v, i) => [v, counts[k][i]]).sort((a, b) => b[1] - a[1]);
+  const max = rows[0][1];
+  bars.innerHTML = rows.map(([v, c]) => `<div class="bar-row"><span class="lbl">${v}</span><span class="rail"><i style="width:${(c / max * 100).toFixed(1)}%"></i></span><span class="num">${c} (${(c / N * 100).toFixed(2)}%)</span></div>`).join('');
+}
+showTrait(0);
+$('#seg').innerHTML = TIER_ORDER.map((t, i) => `<div class="s${i}" style="flex:${tierCount[t]}">${tierCount[t] > 90 ? t : ''}</div>`).join('');
+$('#seglist').innerHTML = TIER_ORDER.map(t => `<span><b>${t}</b> ${tierCount[t]} Watchers</span>`).join('');
+
+apply();
+</script>
+</body>
+</html>
